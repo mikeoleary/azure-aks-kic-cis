@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: hello-world
+  namespace: hello-world
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.org/server-snippets: "server_name ~^.*$;"
+spec:
+  rules:
+  - host: hello-world.example.com #because we have the annotation "nginx.org/server-snippets" with the value above, we can actually use any hostname
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: hello-world
+          servicePort: 80

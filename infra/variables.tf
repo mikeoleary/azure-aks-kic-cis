@@ -1,12 +1,12 @@
 #Azure SP cred details
-variable "client_id" {default = ""}
-variable "client_secret" {default = ""}
-variable "subscription_id" {default = ""}
-variable "tenant_id" {default = ""}
+variable "client_id" {}
+variable "client_secret" {}
+variable "subscription_id" {}
+variable "tenant_id" {}
 #BIG-IP variables
-variable "prefix" {default = "molearytue"}
+variable "prefix" {default = "mydemo"}
 variable "uname" {default = "azureuser"}
-variable "upassword" {default = "Default12345!"}
+variable "upassword" {default = "DefaultPass12345!"}
 variable "location" {default = "East US 2"}
 #Network variables
 variable "network_cidr" {default = "10.0.0.0/16"}

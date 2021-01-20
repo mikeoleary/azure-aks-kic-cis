@@ -23,8 +23,7 @@ The final step of this demo is to view the web application from the internet. Th
 ![Image of Architecture](images/azure-aks-terraform.png)
 
 ## Prerequisites
-1. <b>You will need a Terraform client.</b> 
-I personally use an Ubuntu 18.04 machine and for this demo I used Terraform version 0.12.23. __If you are using a different version of Terraform and have issues, please deploy version 0.12.23 to rule out version issues.__
+1. The Terraform version used for this lab is <b>0.14.4</b> 
 2. <b>You need details of a ServicePrincipal in Azure.</b>
 In this demo your Azure account will be accessed by Terraform using a Service Principal. You can set up a ServicePrincipal by following these instructions. In my example, I use a ServicePrincipal and client secret, but you can also authenticate with client certificate, or Managed Service Identity. <b>The SP should have contributor access in the subscription because it will need to create a Resource Group.</b>
 
