@@ -1,5 +1,5 @@
-# azure-aks-bigip-terraform
-Deploys Azure AKS app protected by BIG-IP for demo use
+# Better Together: CIS and KIC demo, using Azure Kubernetes Service
+This is a demo for the purpose of showing how integration between F5 and K8s can help send traffic into K8s, while NGINX Ingress Controller (KIC) can still play a large role in directing traffic inside the cluster.
 
 Table of contents
 =================
@@ -15,9 +15,12 @@ Table of contents
    * [Support](#support)
 <!--te-->
 ## Purpose and Overview
-This demo will configure a demo environment, running Kubernetes (AKS) and a demo app composed of microservices. This web application will be exposed to the internet via a HA-pair of BIG-IP devices. The pods running in AKS will have ephemeral, changing IP addresses every time this demo is run, however the BIG-IP is configured by F5 CIS, which runs inside Kubernetes and constantly updates the BIG-IP.
+This demo uses Terraform to deploy a cluster on Azure Kubernetes Service (AKS), and 2x F5 BIG-IP devices. There are then instructions to:
+1. Deploy CIS, so that it can configure both devices by exposing pods as pool members in BIG-IP.
+2. Deploy KIC. These are the pods that become pool members in F5.
+3. Deploy a demo app, whose pods are NOT exposed directly to the internal network, but rather via the NGINX ingress controller.
 
-The final step of this demo is to view the web application from the internet. The URL to visit will be output in the Terraform outputs after the successful provisioning of the environment.
+The demo app can be viewed from the internet if you wish, and instructions for deleting this demo are included also.
 
 ## Architecture
 ![Image of Architecture](images/azure-aks-terraform.png)
@@ -31,9 +34,7 @@ In this demo your Azure account will be accessed by Terraform using a Service Pr
 
 Run git clone to copy the Terraform files we need locally
 
-
-
-    git clone https://github.com/mikeoleary/azure-aks-bigip.git
+    git clone https://github.com/mikeoleary/azure-aks-kic-cis.git
 
 > **_NOTE:_**  <b>We will deploy this demo in 2 steps:</b>
 >
@@ -43,7 +44,7 @@ Run git clone to copy the Terraform files we need locally
 ### Deploy Infrastructure
 Change directories to the infra folder. We will then need to update the file called variables.tf to reflect your own Service Principle details:
 
-    cd azure-aks-bigip/infra
+    cd azure-aks-kic-cis/infra
 
 ... and use your favorite editor to update variables.tf, for example:
 
@@ -64,7 +65,7 @@ You want your variables.tf file to include this below. Obviously, replace my xxx
     #BIG-IP variables
     variable "prefix" {default = "someuniquevalue"}
     variable "uname" {default = "azureuser"}
-    variable "upassword" {default = "Default12345!"}
+    variable "upassword" {default = "DefaultPass12345!"}
     variable "location" {default = "East US 2"}
     #Network variables
     variable "network_cidr" {default = "10.0.0.0/16"}
