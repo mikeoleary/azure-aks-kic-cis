@@ -63,8 +63,18 @@ resource "azurerm_lb_probe" "lb_probe" {
   number_of_probes    = 2
 }
 
+resource "azurerm_lb_probe" "lb_probe443" {
+  resource_group_name = var.rg_name
+  loadbalancer_id     = azurerm_lb.lb.id
+  name                = "tcpProbe443"
+  protocol            = "tcp"
+  port                = 443
+  interval_in_seconds = 5
+  number_of_probes    = 2
+}
+
 resource "azurerm_lb_rule" "lb_rule" {
-  name                           = "LBRule"
+  name                           = "LBRule80"
   resource_group_name            = var.rg_name
   loadbalancer_id                = azurerm_lb.lb.id
   protocol                       = "tcp"
@@ -77,6 +87,22 @@ resource "azurerm_lb_rule" "lb_rule" {
   probe_id                       = azurerm_lb_probe.lb_probe.id
   depends_on                     = [azurerm_lb_probe.lb_probe]
 }
+
+resource "azurerm_lb_rule" "lb_rule443" {
+  name                           = "LBRule443"
+  resource_group_name            = var.rg_name
+  loadbalancer_id                = azurerm_lb.lb.id
+  protocol                       = "tcp"
+  frontend_port                  = 443
+  backend_port                   = 443
+  frontend_ip_configuration_name = "LoadBalancerFrontEnd"
+  enable_floating_ip             = false
+  backend_address_pool_id        = azurerm_lb_backend_address_pool.backend_pool.id
+  idle_timeout_in_minutes        = 5
+  probe_id                       = azurerm_lb_probe.lb_probe443.id
+  depends_on                     = [azurerm_lb_probe.lb_probe]
+}
+
 
 # Create a Network Security Group with some rules
 resource "azurerm_network_security_group" "main" {
@@ -479,9 +505,9 @@ resource "null_resource" "f5vm01-run-REST" {
     command = <<-EOF
       #!/bin/bash
       sleep 15
-      curl -k -X GET https://${data.azurerm_public_ip.vm01mgmtpip.ip_address}${var.rest_do_uri} -u ${var.uname}:${var.upassword}
+      curl -k -X GET https://${data.azurerm_public_ip.vm01mgmtpip.ip_address}${var.rest_do_uri} -u admin:${var.upassword}
       sleep 10
-      curl -k -X ${var.rest_do_method} https://${data.azurerm_public_ip.vm01mgmtpip.ip_address}${var.rest_do_uri} -u ${var.uname}:${var.upassword} -d @./${path.module}/${var.rest_vm01_do_file}
+      curl -k -X ${var.rest_do_method} https://${data.azurerm_public_ip.vm01mgmtpip.ip_address}${var.rest_do_uri} -u admin:${var.upassword} -d @./${path.module}/${var.rest_vm01_do_file}
     EOF
   }
 
@@ -497,9 +523,9 @@ resource "null_resource" "f5vm02-run-REST" {
   provisioner "local-exec" {
     command = <<-EOF
       #!/bin/bash
-      curl -k -X GET https://${data.azurerm_public_ip.vm02mgmtpip.ip_address}${var.rest_do_uri} -u ${var.uname}:${var.upassword}
+      curl -k -X GET https://${data.azurerm_public_ip.vm02mgmtpip.ip_address}${var.rest_do_uri} -u admin:${var.upassword}
       sleep 10
-      curl -k -X ${var.rest_do_method} https://${data.azurerm_public_ip.vm02mgmtpip.ip_address}${var.rest_do_uri} -u ${var.uname}:${var.upassword} -d @./${path.module}/${var.rest_vm02_do_file}
+      curl -k -X ${var.rest_do_method} https://${data.azurerm_public_ip.vm02mgmtpip.ip_address}${var.rest_do_uri} -u admin:${var.upassword} -d @./${path.module}/${var.rest_vm02_do_file}
     EOF
   }
 

@@ -4,7 +4,16 @@ Follow these instructions to deploy a basic hello world app, and have it exposed
 ## Hello app deployment
 These instructions will deploy the hello world app.
 
-1. Make sure you are in the current directory, ie., cd to app/helloworld from the root of this repo.
+1. Make sure you are in the current directory, ie., cd to app/helloworld from the root of this repo. Also, set your kube_config file by copying the file that was created from the infra build, or set an environment variable.
+
+````bash
+    #change directory to current
+    cd ../app/helloworld
+    #update your kube config file
+    mv ../../infra/kube_config ~/.kube/config
+    #or, set an environment variable
+    export KUBECONFIG=../../infra/kube_config
+````
 
 2. Run these commands to deploy the resources defined in them
 

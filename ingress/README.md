@@ -20,7 +20,7 @@ These instructions will configure 2x CIS instances.
 ````yaml
 spec:
   host: coffee.example.com
-  virtualServerAddress: "10.0.0.4"
+  virtualServerAddress: "10.0.2.100"
   pools:
   - path: /coffee
     service: nginx-ingress-tls
@@ -75,6 +75,7 @@ These instructions will configure NGINX Ingress Controller
 ````
 3. Create VirtualServer object which will be seen by F5 CIS and created on BIG-IP
 ````bash
+    kubectl apply -f cis/crd/tlsprofile.yaml
     kubectl apply -f cis/crd/virtualserver.yaml
 ````
 
