@@ -23,7 +23,10 @@ This demo uses Terraform to deploy a cluster on Azure Kubernetes Service (AKS), 
 The demo app can be viewed from the internet if you wish, and instructions for deleting this demo are included also.
 
 ## Architecture
-![Image of Architecture](images/better_together.png)
+### Cloud Infrastructure provisioned
+![Image of Cloud Architecture](images/azure-aks-crd.png)
+### Focused architecture of traffic flow
+![Image of Application Architecture](images/better_together.png)
 
 ## Prerequisites
 1. The Terraform version used for this lab is <b>0.14.4</b> 
@@ -82,32 +85,30 @@ Now let's run Terraform and build infrastructure! You will need to type "yes" at
 
 Note: it may help to <b>wait 2 mins at this point</b> before running the commands in the next step. The BIG-IPs have just been provisioned and we want to be sure they are up and running before sending them REST calls via the next steps.
 
+### Deploy Ingress Controllers
+Now let's <b>change directories</b> to install ingress controllers.
+
+    cd ../ingress/
+
+Follow the instructions within the README.md in this location.
+
 ### Deploy Application
-Now let's <b>change directories</b> and run Terraform and build apps!
+Now let's <b>change directories</b> to install a demo app.
 
-    cd ../apps/
+    cd ../app/
 
-You will need to type "yes" at the last prompt.
+Follow the instructions within the README.md in this location.
 
-    terraform init
-    terraform plan
-    terraform apply 
+Once this is complete, you will have a running app inside Kubernetes that is exposed to the internet via F5 BIG-IP, and NGINX ingress controller. The value of this demo is not in exposing the app, but in the possibilities that now exist for the application owner, such as:
+- using NGINX Ingress Controller as a means to control app traffic, thereby releiving F5 admins of the need for regular updates, or
+- applying WAF and security controls at BIG-IP or at NGINX, whichever is preferred by the organization, or,
+- managing TLS certificates at BIG-IP, NGINX, or both,
+- etc.
 
-Once this is complete, you should see an output called appUrl. Visit this URL, and you should see a simple demo app (the [Azure vote demo app](https://docs.microsoft.com/en-us/azure/aks/kubernetes-walkthrough)). This demo app is a good example because it involves 2 services within Kubernetes (a front end service, with multiple pods, and a backend service, with one pod). Here is the command to print this output on the screen:
+### Delete environment 
+Finally, don't forget to delete your resources! Again - you'll need to type "yes" when prompted. 
     
-    cd ../infra/ 
-    terraform output appUrl
-
-The output of this command is a URL for you to visit. The demo is successful when you see this app below. <b>This microservices app is 2-tier, running in AKS, and exposed to the internet via the F5 BIG-IP. Now, you can apply firewall rules, iRules, SSL termination, or any other F5 app services at your F5 BIG-IP, and still get the benefit of running in AKS.</b>
-
-![Demo App](/images/demoapp.png)
-
-Finally, don't forget to delete your resources! Again - you'll need to type "yes" when prompted. Let's ensure we delete the resources from the "apps" directory and then from the "infra" directory.
-
-    cd ../apps
-    terraform destroy
-    
-And now back to the /infra directory and destroy those resources too.
+Back to the /infra directory to destroy our resources.
 
     cd ../infra
     terraform destroy
@@ -115,7 +116,7 @@ And now back to the /infra directory and destroy those resources too.
 Once in a while, Azure will destroy these resources without considering dependencies, and you'll see an error when you delete your resources. If this happens, just destroy again with the command above, or just delete the Azure Resource Group via the Azure portal.
 
 ## Conclusion
-Thanks for reading. This demo was intended to show how F5 Container Ingress Services can work with Azure AKS.
+Thanks for reading. This demo was intended to show a few things: F5 CIS, NGINX KIC, and specifically using CRD's in your CIS config.
 
 ## Support
 This repo is not supported by F5. It is a demo that I have put together personally, but I'd be happy if you could submit issues via GitHub.
