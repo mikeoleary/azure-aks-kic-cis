@@ -99,6 +99,7 @@ Now let's <b>change directories</b> to install a demo app.
 
 Follow the instructions within the README.md in this location.
 
+### Verify and review your environment
 Once this is complete, you will have a running app inside Kubernetes that is exposed to the internet via F5 BIG-IP, and NGINX ingress controller. The value of this demo is not in exposing the app, but in the possibilities that now exist for the application owner, such as:
 - using NGINX Ingress Controller as a means to control app traffic, thereby releiving F5 admins of the need for regular updates, or
 - applying WAF and security controls at BIG-IP or at NGINX, whichever is preferred by the organization, or,
