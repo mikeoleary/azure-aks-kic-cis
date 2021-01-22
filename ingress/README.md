@@ -4,27 +4,39 @@ Follow these instructions to configure ingress to your cluster with F5 CIS and N
 ## F5 CIS (<b>C</b>ontroller <b>I</b>ngress <b>S</b>ervices)
 These instructions will configure 2x CIS instances.
 
-1. Edit the file ````cis/secret_sa_rbac.yaml```` so that the password is the <b>base64 encoded</b> password of the admin account on F5 BIG-IP.
-2. Edit the file ````cis/cis1.yaml```` so that the fields below are updated
+1. (Optional. Only required if you changed default variables.) Edit the file ````cis/secret_sa_rbac.yaml```` so that the password is the <b>base64 encoded</b> password of the admin account on F5 BIG-IP.
+2. (Optional. Only required if you changed default variables.) Edit the file ````cis/cis1.yaml```` so that the fields below are updated
 ````bash
     "--bigip-url=`<mgmt ip of bigip>`",
     "--bigip-partition=`<partition on bigip to manage>`",
 ````
-3. Edit the file ````cis/cis2.yaml```` so that the fields below are updated
+3. (Optional. Only required if you changed default variables.) Edit the file ````cis/cis2.yaml```` so that the fields below are updated
 ````bash
     "--bigip-url=`<mgmt ip of bigip>`",
     "--bigip-partition=`<partition on bigip to manage>`",
 ````
-4. Edit the file ````cis/crd/virtualserver.yaml```` so that the field ````virtualServerAddress```` below is updated to your desired IP address for your VIP:
+4. (Optional. Only required if you changed default variables.) Edit the file ````cis/crd/virtualserver.yaml```` so that the field ````virtualServerAddress```` below is updated to your desired IP address for your VIP:
 
 ````yaml
+apiVersion: "cis.f5.com/v1"
+kind: VirtualServer
+metadata:
+  name: hello-world-virtual-server
+  namespace: nginx-ingress
+  labels:
+    f5cr: "true"
 spec:
-  host: coffee.example.com
+  tlsProfileName: hello-world-tls  # --> This will attach hello-world-tls TLSProfile
   virtualServerAddress: "10.0.2.100"
   pools:
-  - path: /coffee
-    service: nginx-ingress-tls
+  - path: /
+    service: nginx-ingress
     servicePort: 80
+    monitor:
+      type: http
+      interval: 10
+      timeout: 31
+      send: "/"
 ````
 5. Set your kube_config file by copying the file that was created from the infra build, or set an environment variable.
 

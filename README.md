@@ -95,7 +95,7 @@ Follow the instructions within the README.md in this location.
 ### Deploy Application
 Now let's <b>change directories</b> to install a demo app.
 
-    cd ../app/
+    cd ../app/helloworld
 
 Follow the instructions within the README.md in this location.
 

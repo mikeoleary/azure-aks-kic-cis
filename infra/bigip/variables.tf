@@ -22,8 +22,8 @@ variable "f5vm02int" {default = ""}
 #Variables for onboard.tpl
 variable "uname" {default = ""}
 variable "upassword" {default = ""}
-variable "DO_onboard_URL" {    default = "https://github.com/F5Networks/f5-declarative-onboarding/releases/download/v1.10.0/f5-declarative-onboarding-1.10.0-2.noarch.rpm"}
-variable "AS3_URL" {default = "https://github.com/F5Networks/f5-appsvcs-extension/releases/download/v3.18.0/f5-appsvcs-3.18.0-4.noarch.rpm"}
+variable "DO_onboard_URL" {    default = "https://github.com/F5Networks/f5-declarative-onboarding/releases/download/v1.18.0/f5-declarative-onboarding-1.18.0-4.noarch.rpm"}
+variable "AS3_URL" {default = "https://github.com/F5Networks/f5-appsvcs-extension/releases/download/v3.25.0/f5-appsvcs-3.25.0-3.noarch.rpm"}
 variable "libs_dir" {default = "/config/cloud/azure/node_modules"}
 variable "onboard_log" {default = "/var/log/startup-script.log"}
 
