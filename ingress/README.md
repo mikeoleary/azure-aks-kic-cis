@@ -48,15 +48,13 @@ spec:
 ````
 6. Then deploy CIS in your cluster with the commands:
 ````bash
+    #create required CRD's
+    kubectl apply -f cis/crd-definition/customresourcedefinitions.yaml
     #create the Kubernetes secret, service account, and rbac resources in your cluster
     kubectl apply -f cis/secret_sa_rbac.yaml
     #deploy CIS
     kubectl apply -f cis/cis1.yaml
     kubectl apply -f cis/cis2.yaml
-````
-7. Install the CRD's we want to use
-````bash
-    kubectl apply -f cis/crd-definition/customresourcedefinitions.yaml
 ````
 
 ## NGINX Ingress Controller (referred to as KIC, for <b>K</b>ubernetes <b>I</b>ngress <b>C</b>ontroller)
@@ -89,6 +87,7 @@ These instructions will configure NGINX Ingress Controller
 ````bash
     kubectl apply -f cis/crd/tlsprofile.yaml
     kubectl apply -f cis/crd/virtualserver.yaml
+    kubectl apply -f cis/crd/virtualserver2.yaml
 ````
 
 ## Deleting your resources

@@ -1,7 +1,13 @@
 #AKS outputs
 #output "client_certificate" { value = module.aks.client_certificate}
-output "kube_config" {  value = module.aks.kube_config}
-output "kube_config_raw" {  value = module.aks.kube_config_raw}
+output "kube_config" {  
+    value = module.aks.kube_config
+    sensitive = true
+    }
+output "kube_config_raw" {  
+    value = module.aks.kube_config_raw
+    sensitive = true
+    }
 
 #BIGIP outputs
 output "vm01mgmtpip" {  value = module.bigip.vm01mgmtpip}
