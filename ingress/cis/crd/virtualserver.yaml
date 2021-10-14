@@ -9,6 +9,7 @@ spec:
   tlsProfileName: hello-world-tls  # --> This will attach hello-world-tls TLSProfile
   virtualServerAddress: "10.0.2.100"
   virtualServerName: "hello-world-vs"
+  httpTraffic: allow
   pools:
   - path: /
     service: nginx-ingress

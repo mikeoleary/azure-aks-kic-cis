@@ -16,3 +16,4 @@ output "vm02mgmtpip" {  value = module.bigip.vm02mgmtpip}
 #Verification outputs
 
 output "appUrl" {  value = "http://${module.bigip.lbpip}/" }
+output "appUrl_secure" {  value = "https://${module.bigip.lbpip}/" }

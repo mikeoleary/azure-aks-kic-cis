@@ -70,10 +70,10 @@ These instructions will configure NGINX Ingress Controller
     kubectl apply -f nginx/common/ingress-class.yaml
     
     #Create CRD's
-    kubectl apply -f nginx/crd/vs-definition.yaml
-    kubectl apply -f nginx/crd/vsr-definition.yaml
-    kubectl apply -f nginx/crd/ts-definition.yaml
-    kubectl apply -f nginx/crd/policy-definition.yaml
+    kubectl apply -f nginx/common/crds/k8s.nginx.org_virtualservers.yaml
+    kubectl apply -f nginx/common/crds/k8s.nginx.org_virtualserverroutes.yaml
+    kubectl apply -f nginx/common/crds/k8s.nginx.org_transportservers.yaml
+    kubectl apply -f nginx/common/crds/k8s.nginx.org_policies.yaml
     
     #Run the Ingress Controller
     kubectl apply -f nginx/deployment/nginx-ingress.yaml

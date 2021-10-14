@@ -15,11 +15,12 @@ spec:
      #annotations:
        #prometheus.io/scrape: "true"
        #prometheus.io/port: "9113"
+       #prometheus.io/scheme: http
     spec:
       serviceAccountName: nginx-ingress
       containers:
-      - image: nginx/nginx-ingress:edge
-        imagePullPolicy: Always
+      - image: nginx/nginx-ingress:2.0.2
+        imagePullPolicy: IfNotPresent
         name: nginx-ingress
         ports:
         - name: http
@@ -28,8 +29,8 @@ spec:
           containerPort: 443
         - name: readiness-port
           containerPort: 8081
-       #- name: prometheus
-         #containerPort: 9113
+        - name: prometheus
+          containerPort: 9113
         readinessProbe:
           httpGet:
             path: /nginx-ready

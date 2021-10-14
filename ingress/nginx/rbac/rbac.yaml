@@ -76,6 +76,8 @@ rules:
   resources:
   - virtualservers/status
   - virtualserverroutes/status
+  - policies/status
+  - transportservers/status
   verbs:
   - update
 - apiGroups:
@@ -87,7 +89,7 @@ rules:
 - apiGroups:
     - cis.f5.com
   resources:
-    - nginxcisconnectors
+    - ingresslinks
   verbs:
     - list
     - watch
