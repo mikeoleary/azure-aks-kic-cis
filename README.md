@@ -33,6 +33,9 @@ The demo app can be viewed from the internet if you wish, and instructions for d
 2. <b>You need details of a ServicePrincipal in Azure.</b>
 In this demo your Azure account will be accessed by Terraform using a Service Principal. You can set up a ServicePrincipal by following these instructions. In my example, I use a ServicePrincipal and client secret, but you can also authenticate with client certificate, or Managed Service Identity. <b>The SP should have contributor access in the subscription because it will need to create a Resource Group.</b>
 
+## Quick deploy
+If you have run this lab before and are only looking to stand up the demo as quickly as possible, you can clone the repo, update ```infra/variables.tf```, and run the script at [deploy.sh](deploy.sh) to deploy, and [destroy.sh](destroy.sh) to destroy. Script should be run from root directory of repo.
+
 ## Instructions
 
 Run git clone to copy the Terraform files we need locally
