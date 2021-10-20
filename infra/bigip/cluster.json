@@ -4,6 +4,23 @@
     "label": "Basic onboarding",
     "Common": {
         "class": "Tenant",
+        "GSLBDataCenter1": {
+            "class": "GSLBDataCenter"
+          },
+          "GSLBServer1": {
+            "class": "GSLBServer",
+            "dataCenter": "GSLBDataCenter1",
+            "serverType": "bigip",
+            "virtualServerDiscoveryMode": "enabled",
+            "devices": [
+               {
+                   "address":"${local_selfip}"
+               },
+               {
+                   "address": "${local_selfip2}"
+               }
+            ]
+          },
         "myDns": {
             "class": "DNS",
             "nameServers": [
@@ -25,7 +42,8 @@
         },
         "myProvisioning": {
             "class": "Provision",
-            "ltm": "nominal"
+            "ltm": "nominal",
+            "gtm": "nominal"
         },
         "external": {
             "class": "VLAN",

@@ -1,5 +1,6 @@
     cd app/helloworld
     #delete demo app 
+    kubectl delete -f externaldns.yaml
     kubectl delete -f ingress.yaml
     kubectl delete -f service.yaml
     kubectl delete -f deployment.yaml
@@ -14,10 +15,10 @@
     kubectl delete -f nginx/common/default-server-secret.yaml
     kubectl delete -f nginx/rbac/rbac.yaml
     kubectl delete -f nginx/common/ns-and-sa.yaml
-    kubectl delete -f nginx/crd/vs-definition.yaml
-    kubectl delete -f nginx/crd/vsr-definition.yaml
-    kubectl delete -f nginx/crd/ts-definition.yaml
-    kubectl delete -f nginx/crd/policy-definition.yaml
+    kubectl delete -f nginx/common/crds/k8s.nginx.org_virtualservers.yaml
+    kubectl delete -f nginx/common/crds/k8s.nginx.org_virtualserverroutes.yaml
+    kubectl delete -f nginx/common/crds/k8s.nginx.org_transportservers.yaml
+    kubectl delete -f nginx/common/crds/k8s.nginx.org_policies.yaml
     #delete CIS
     kubectl delete -f cis/cis1.yaml
     kubectl delete -f cis/cis2.yaml
@@ -26,3 +27,4 @@
     #destroy infrastructure
     cd ../infra
     terraform destroy -auto-approve
+    cd ..

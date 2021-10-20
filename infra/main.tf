@@ -66,32 +66,6 @@ module "bigip" {
   }
 }
 
-# Generate a tfvars file for kubernetes provider config
-data "template_file" "tfvars" {
-  template = file("${path.module}/terraform.tfvars.example")
-  vars = {
-    #variables for CIS configuration
-    f5vm01int = cidrhost(module.vnet.internal_subnet_prefix, 10)
-    f5vm02int = cidrhost(module.vnet.internal_subnet_prefix, 11)
-    upassword = var.upassword
-    #variables for k8s app
-    f5vm01ext_sec = cidrhost(module.vnet.external_subnet_prefix, 100)
-    f5vm02ext_sec = cidrhost(module.vnet.external_subnet_prefix, 101)
-    #other variables
-    prefix = var.prefix
-    rg_name = module.vnet.rg_name
-    #azure creds
-    subscription_id = var.subscription_id,
-    client_id = var.client_id,
-    tenant_id = var.tenant_id,
-    client_secret = var.client_secret
-  }
-}
-
-resource "local_file" "tfvars" {
-  content  = data.template_file.tfvars.rendered
-  filename = "../apps/terraform.tfvars"
-}
 resource "local_file" "kube_config" {
     content     = module.aks.kube_config_raw
     filename = "${path.module}/kube_config"

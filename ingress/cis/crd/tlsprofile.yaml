@@ -10,5 +10,6 @@
      termination: edge
      clientSSL: /Common/clientssl
      reference: bigip             # --> reference profiles created in BIG-IP by User
-   hosts:
-   - hello-world.example.com
+#  hosts:
+#    - demo.my-f5.com
+#    - demo.example.com

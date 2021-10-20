@@ -365,6 +365,8 @@ spec:
                   items:
                     type: object
                     properties:
+                      name:
+                        type: string
                       dataServerName:
                         type: string
                       dnsRecordType:
