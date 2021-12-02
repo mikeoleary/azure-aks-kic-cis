@@ -6,8 +6,10 @@ metadata:
   labels:
     f5cr: "true"
 spec:
+  #host: demo2.my-f5.com
   tlsProfileName: hello-world-tls  # --> This will attach hello-world-tls TLSProfile
-  virtualServerAddress: "10.0.2.101"
+  #virtualServerAddress: "10.0.2.101"
+  ipamLabel: Production
   virtualServerName: "hello-world-vs2"
   httpTraffic: allow
   pools:
