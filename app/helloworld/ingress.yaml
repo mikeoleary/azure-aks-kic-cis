@@ -8,7 +8,7 @@ metadata:
 spec:
   ingressClassName: "nginx"
   rules:
-  - host: hello-world.example.com #because we have the annotation "nginx.org/server-snippets" with the value above, we can actually use any hostname
+  - host: demo.my-f5.com #because we have the annotation "nginx.org/server-snippets" with the value above, we can actually use any hostname
     http:
       paths:
       - path: /

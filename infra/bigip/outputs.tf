@@ -5,4 +5,5 @@ output "vm02mgmtpip" {
   value = data.azurerm_public_ip.vm02mgmtpip.ip_address
 }
 output "lbpip" {value = data.azurerm_public_ip.lbpip.ip_address}
+output "lbpip2" {value = data.azurerm_public_ip.lbpip-dns.ip_address}
 

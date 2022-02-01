@@ -24,6 +24,16 @@ resource "azurerm_public_ip" "lbpip" {
   allocation_method            = "Static"
   domain_name_label            = "${var.prefix}lbpip"
 }
+
+resource "azurerm_public_ip" "lbpip-dns" {
+  name                         = "${var.prefix}-lb-pip-dns"
+  location                     = var.location
+  resource_group_name          = var.rg_name
+  sku                          = "Standard"
+  allocation_method            = "Static"
+  domain_name_label            = "${var.prefix}lbpip-dns"
+}
+
 # Create Availability Set
 resource "azurerm_availability_set" "avset" {
   name                         = "${var.prefix}avset"
@@ -44,6 +54,10 @@ resource "azurerm_lb" "lb" {
   frontend_ip_configuration {
     name                 = "LoadBalancerFrontEnd"
     public_ip_address_id = azurerm_public_ip.lbpip.id
+  }
+  frontend_ip_configuration {
+    name                 = "LoadBalancerFrontEnd2"
+    public_ip_address_id = azurerm_public_ip.lbpip-dns.id
   }
 }
 
@@ -73,6 +87,28 @@ resource "azurerm_lb_probe" "lb_probe443" {
   number_of_probes    = 2
 }
 
+resource "azurerm_lb_probe" "lb_probeHttp80" {
+  resource_group_name = var.rg_name
+  loadbalancer_id     = azurerm_lb.lb.id
+  name                = "httpProbe80"
+  protocol            = "http"
+  port                = 80
+  interval_in_seconds = 5
+  number_of_probes    = 2
+  request_path        = "/"
+}
+
+resource "azurerm_lb_probe" "lb_probeHttps443" {
+  resource_group_name = var.rg_name
+  loadbalancer_id     = azurerm_lb.lb.id
+  name                = "httpProbe443"
+  protocol            = "https"
+  port                = 80
+  interval_in_seconds = 5
+  number_of_probes    = 2
+  request_path        = "/"
+}
+
 resource "azurerm_lb_rule" "lb_rule" {
   name                           = "LBRule80"
   resource_group_name            = var.rg_name
@@ -81,11 +117,11 @@ resource "azurerm_lb_rule" "lb_rule" {
   frontend_port                  = 80
   backend_port                   = 80
   frontend_ip_configuration_name = "LoadBalancerFrontEnd"
-  enable_floating_ip             = false
+  enable_floating_ip             = true
   backend_address_pool_id        = azurerm_lb_backend_address_pool.backend_pool.id
   idle_timeout_in_minutes        = 5
-  probe_id                       = azurerm_lb_probe.lb_probe.id
-  depends_on                     = [azurerm_lb_probe.lb_probe]
+  probe_id                       = azurerm_lb_probe.lb_probeHttp80.id
+  depends_on                     = [azurerm_lb_probe.lb_probeHttp80]
 }
 
 resource "azurerm_lb_rule" "lb_rule443" {
@@ -96,13 +132,42 @@ resource "azurerm_lb_rule" "lb_rule443" {
   frontend_port                  = 443
   backend_port                   = 443
   frontend_ip_configuration_name = "LoadBalancerFrontEnd"
-  enable_floating_ip             = false
+  enable_floating_ip             = true
   backend_address_pool_id        = azurerm_lb_backend_address_pool.backend_pool.id
   idle_timeout_in_minutes        = 5
   probe_id                       = azurerm_lb_probe.lb_probe443.id
   depends_on                     = [azurerm_lb_probe.lb_probe]
 }
 
+resource "azurerm_lb_rule" "lb_rule53tcp" {
+  name                           = "LBRule53tcp"
+  resource_group_name            = var.rg_name
+  loadbalancer_id                = azurerm_lb.lb.id
+  protocol                       = "tcp"
+  frontend_port                  = 53
+  backend_port                   = 53
+  frontend_ip_configuration_name = "LoadBalancerFrontEnd2"
+  enable_floating_ip             = true
+  backend_address_pool_id        = azurerm_lb_backend_address_pool.backend_pool.id
+  idle_timeout_in_minutes        = 5
+  probe_id                       = azurerm_lb_probe.lb_probeHttp80.id
+  depends_on                     = [azurerm_lb_probe.lb_probeHttp80]
+}
+
+resource "azurerm_lb_rule" "lb_rule53udp" {
+  name                           = "LBRule53udp"
+  resource_group_name            = var.rg_name
+  loadbalancer_id                = azurerm_lb.lb.id
+  protocol                       = "udp"
+  frontend_port                  = 53
+  backend_port                   = 53
+  frontend_ip_configuration_name = "LoadBalancerFrontEnd2"
+  enable_floating_ip             = true
+  backend_address_pool_id        = azurerm_lb_backend_address_pool.backend_pool.id
+  idle_timeout_in_minutes        = 5
+  probe_id                       = azurerm_lb_probe.lb_probeHttp80.id
+  depends_on                     = [azurerm_lb_probe.lb_probeHttp80]
+}
 
 # Create a Network Security Group with some rules
 resource "azurerm_network_security_group" "main" {
@@ -174,6 +239,33 @@ resource "azurerm_network_security_group" "main" {
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
+
+  security_rule {
+    name                       = "allow_dns_tcp"
+    description                = "Allow DNS tcp access"
+    priority                   = 150
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "53"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
+  security_rule {
+    name                       = "allow_dns_udp"
+    description                = "Allow DNS udp access"
+    priority                   = 160
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Udp"
+    source_port_range          = "*"
+    destination_port_range     = "53"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
   #this explicit dependency is not needed for creation (terraform apply) but can be useful when deleting resources where deleting a VM and NSG at the same time may cause conflicts with simultaneous NIC updates
   depends_on           = [azurerm_virtual_machine.f5vm01, azurerm_virtual_machine.f5vm02]
 }
@@ -213,6 +305,7 @@ resource "azurerm_network_interface" "vm02-mgmt-nic" {
 resource "azurerm_network_interface" "vm01-ext-nic" {
   name                = "${var.prefix}-vm01-ext-nic"
   location                  = var.location
+  enable_ip_forwarding      = true
   resource_group_name       = var.rg_name
   #network_security_group_id = azurerm_network_security_group.main.id
   depends_on          = [azurerm_lb_backend_address_pool.backend_pool]
@@ -235,6 +328,7 @@ resource "azurerm_network_interface" "vm01-ext-nic" {
 resource "azurerm_network_interface" "vm02-ext-nic" {
   name                = "${var.prefix}-vm02-ext-nic"
   location                  = var.location
+  enable_ip_forwarding      = true
   resource_group_name       = var.rg_name
   #network_security_group_id = azurerm_network_security_group.main.id
   depends_on          = [azurerm_lb_backend_address_pool.backend_pool]
@@ -303,14 +397,14 @@ resource "azurerm_network_interface_security_group_association" "nsgassociation4
 resource "azurerm_network_interface_backend_address_pool_association" "bpool_assc_vm01" {
   depends_on          = [azurerm_lb_backend_address_pool.backend_pool, azurerm_network_interface.vm01-ext-nic]
   network_interface_id    = azurerm_network_interface.vm01-ext-nic.id
-  ip_configuration_name   = "secondary"
+  ip_configuration_name   = "primary"
   backend_address_pool_id = azurerm_lb_backend_address_pool.backend_pool.id
 }
 
 resource "azurerm_network_interface_backend_address_pool_association" "bpool_assc_vm02" {
   depends_on          = [azurerm_lb_backend_address_pool.backend_pool, azurerm_network_interface.vm02-ext-nic]
   network_interface_id    = azurerm_network_interface.vm02-ext-nic.id
-  ip_configuration_name   = "secondary"
+  ip_configuration_name   = "primary"
   backend_address_pool_id = azurerm_lb_backend_address_pool.backend_pool.id
 }
 
@@ -340,6 +434,21 @@ data "template_file" "vm_onboard_device2" {
     onboard_log		  = var.onboard_log
     hostname     = var.host2_name
   }
+}
+
+data "template_file" "vm01_as3_data" {
+  template = file("${path.module}/baseline-as3.json")
+  vars = {
+    dns_listener_addr	    = data.azurerm_public_ip.lbpip-dns.ip_address
+    f5vm01ext = var.f5vm01ext
+    f5vm02ext = var.f5vm02ext
+  }
+}
+
+# Run REST API for configuration
+resource "local_file" "vm01_as3_data" {
+  content     = data.template_file.vm01_as3_data.rendered
+  filename    = "${path.module}/vm01_as3_data.json"
 }
 
 data "template_file" "vm01_do_json" {
@@ -508,6 +617,8 @@ resource "null_resource" "f5vm01-run-REST" {
       curl -k -X GET https://${data.azurerm_public_ip.vm01mgmtpip.ip_address}${var.rest_do_uri} -u admin:${var.upassword}
       sleep 10
       curl -k -X ${var.rest_do_method} https://${data.azurerm_public_ip.vm01mgmtpip.ip_address}${var.rest_do_uri} -u admin:${var.upassword} -d @./${path.module}/${var.rest_vm01_do_file}
+      sleep 300
+      curl -k -X ${var.rest_as3_method} https://${data.azurerm_public_ip.vm01mgmtpip.ip_address}${var.rest_as3_uri} -u admin:${var.upassword} -d @./${path.module}/${var.rest_vm01_as3_data}
     EOF
   }
 
@@ -544,12 +655,17 @@ data "azurerm_public_ip" "lbpip" {
   name                = azurerm_public_ip.lbpip.name
   resource_group_name = var.rg_name
 }
+data "azurerm_public_ip" "lbpip-dns" {
+  name                = azurerm_public_ip.lbpip-dns.name
+  resource_group_name = var.rg_name
+}
 
 output "sg_id" { value = azurerm_network_security_group.main.id }
 output "sg_name" { value = var.rg_name }
 output "mgmt_subnet_gw" { value = var.mgmt_gw }
 output "ext_subnet_gw" { value = var.ext_gw }
 output "ALB_app1_pip" { value = data.azurerm_public_ip.lbpip.ip_address }
+output "ALB_dns_pip" { value = data.azurerm_public_ip.lbpip-dns.ip_address }
 
 output "f5vm01_id" { value = azurerm_virtual_machine.f5vm01.id  }
 output "f5vm01_mgmt_private_ip" { value = azurerm_network_interface.vm01-mgmt-nic.private_ip_address }

@@ -17,3 +17,5 @@ output "vm02mgmtpip" {  value = module.bigip.vm02mgmtpip}
 
 output "appUrl" {  value = "http://${module.bigip.lbpip}/" }
 output "appUrl_secure" {  value = "https://${module.bigip.lbpip}/" }
+output "app-vip" {  value = module.bigip.lbpip }
+output "dns-listener-vip" {  value = module.bigip.lbpip2 }

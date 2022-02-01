@@ -1,6 +1,5 @@
     cd app/helloworld
     #delete demo app 
-    kubectl delete -f externaldns.yaml
     kubectl delete -f ingress.yaml
     kubectl delete -f service.yaml
     kubectl delete -f deployment.yaml
