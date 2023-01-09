@@ -18,7 +18,7 @@ spec:
       # permissions
       containers:
         - name: k8s-bigip-ctlr
-          image: "f5networks/k8s-bigip-ctlr:2.7.1"
+          image: "f5networks/k8s-bigip-ctlr:2.11.0"
           env:
             - name: BIGIP_USERNAME
               valueFrom:
@@ -49,7 +49,8 @@ spec:
             "--pool-member-type=cluster",
             "--insecure",
             "--custom-resource-mode=true",
-            "--log-level=DEBUG"
+            "--log-level=DEBUG",
+            "--disable-teems=true"
             # for secure communication provide the internal ca certificates using config-map with below option and remove insecure parameter
             #"--trusted-certs-cfgmap=<namespace/configmap>",
             ]
