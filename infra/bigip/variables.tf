@@ -48,7 +48,7 @@ variable "SP" {
 }
 # BIGIP Image
 variable instance_type	{ default = "Standard_DS4_v2" }
-variable image_name	{ default = "f5-bigip-virtual-edition-25m-best-hourly" }
+variable image_name	{ default = "f5-bigip-virtual-edition-25m-best-hourly-po-f5" }
 variable product	{ default = "f5-big-ip-best" }
 variable bigip_version	{ default = "latest" }
 
