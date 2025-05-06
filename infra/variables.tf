@@ -1,8 +1,8 @@
 #Azure SP cred details
-variable "client_id" {}
-variable "client_secret" {}
-variable "subscription_id" {}
-variable "tenant_id" {}
+variable "client_id" {default = ""}
+variable "client_secret" {default = ""}
+variable "subscription_id" {default = ""}
+variable "tenant_id" {default = ""}
 #BIG-IP variables
 variable "prefix" {default = "mydemo"}
 variable "uname" {default = "azureuser"}

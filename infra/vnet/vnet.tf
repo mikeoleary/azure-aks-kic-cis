@@ -11,17 +11,17 @@ resource "azurerm_virtual_network" "moleary-vnet" {
 
   subnet {
     name           = "mgmt"
-    address_prefix = var.mgmt_subnet_prefix
+    address_prefixes = [var.mgmt_subnet_prefix]
   }
 
   subnet {
     name           = "external"
-    address_prefix = var.external_subnet_prefix
+    address_prefixes = [var.external_subnet_prefix]
   }
 
   subnet {
     name           = "internal"
-    address_prefix = var.internal_subnet_prefix
+    address_prefixes = [var.internal_subnet_prefix]
 #    security_group = azurerm_network_security_group.example.id
   }
 }
