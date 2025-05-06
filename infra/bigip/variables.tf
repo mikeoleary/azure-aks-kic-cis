@@ -47,7 +47,7 @@ variable "SP" {
 	}
 }
 # BIGIP Image
-variable instance_type	{ default = "Standard_D4s_v3" }
+variable instance_type	{ default = "Standard_DS3_v2" }
 variable image_name	{ default = "f5-big-best-plus-hourly-25mbps-po-f5" }
 variable product	{ default = "f5-big-ip-best" }
 variable bigip_version	{ default = "latest" }
